@@ -44,7 +44,9 @@ const CrystallizeProvider: FunctionComponent<{
 function useCrystallizeState() {
     const context = React.useContext(StateContext);
     if (context === undefined) {
-        throw new Error('useCrystallizeState must be used within an App.');
+        throw new Error(
+            'useCrystallizeState must be used within the MainProvider.'
+        );
     }
     return context;
 }
@@ -52,7 +54,9 @@ function useCrystallizeState() {
 function useCrystallizeDispatch() {
     const context = React.useContext(DispatchContext);
     if (context === undefined) {
-        throw new Error('useCrystallizeDispatch must be used within an App.');
+        throw new Error(
+            'useCrystallizeDispatch must be used within the MainProvider.'
+        );
     }
     return context;
 }
