@@ -5,6 +5,10 @@
         "test": "jest",
         "bump": "yarn tsc && yarn version --no-git-tag-version --new-version"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:CrystallizeAPI/reactjs-hooks.git"
+    },
     "main": "dist/index.js",
     "types": "dist/types/index.d.ts",
     "devDependencies": {
