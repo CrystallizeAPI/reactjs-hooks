@@ -7,7 +7,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@github.com:CrystallizeAPI/reactjs-hooks.git"
+        "url": "https://github.com/CrystallizeAPI/reactjs-hooks.git"
     },
     "main": "dist/index.js",
     "types": "dist/types/index.d.ts",
@@ -28,9 +28,9 @@
     },
     "volta": {
         "node": "16.13.2",
-        "yarn": "1.22.17"
+        "yarn": "1.22.18"
     },
     "license": "MIT",
     "name": "@crystallize/reactjs-hooks",
-    "version": "0.1.0"
+    "version": "0.2.1"
 }
