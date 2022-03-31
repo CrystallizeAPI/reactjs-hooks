@@ -24,7 +24,7 @@ It provides a `CrystallizeProvider` on which you can get:
 import { CrystallizeProvider } from '@crystallize/reactjs-hooks';
 ReactDOM.render(
     <React.StrictMode>
-        <CrystallizeProvider tenantIdentifier="furniture">
+        <CrystallizeProvider language="en" tenantIdentifier="furniture">
             <App />
         </CrystallizeProvider>
     </React.StrictMode>,

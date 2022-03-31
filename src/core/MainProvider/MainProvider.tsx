@@ -10,27 +10,44 @@ import { FunctionComponent } from 'react';
 import {
     ClientConfiguration,
     createClient,
-    ClientInterface
+    ClientInterface,
+    createNavigationByFoldersFetcher,
+    createNavigationByTopicsFetcher
 } from '@crystallize/js-api-client';
+import type { TreeFetcher } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
 const DispatchContext = React.createContext<Dispatch | undefined>(undefined);
 
-const initialState = (configuration: ClientConfiguration): State => {
+const initialState = (
+    configuration: ClientConfiguration,
+    language: string
+): State => {
     return {
         loading: false,
+        language: language,
         configuration: configuration
     };
 };
 
 const CrystallizeProvider: FunctionComponent<{
+    language: string;
     tenantIdentifier: string;
     accessTokenId?: string;
     accessTokenSecret?: string;
-}> = ({ tenantIdentifier, accessTokenId, accessTokenSecret, children }) => {
+}> = ({
+    tenantIdentifier,
+    accessTokenId,
+    accessTokenSecret,
+    language,
+    children
+}) => {
     const [state, dispatch] = React.useReducer(
         Reducer,
-        initialState({ tenantIdentifier, accessTokenId, accessTokenSecret })
+        initialState(
+            { tenantIdentifier, accessTokenId, accessTokenSecret },
+            language
+        )
     );
     return (
         <StateContext.Provider value={state}>
@@ -61,17 +78,61 @@ function useCrystallizeDispatch() {
     return context;
 }
 
+export type LanguageAwareTreeFetcher = (
+    path: string,
+    depth: number,
+    extraQuery?: any,
+    perLevel?: (currentLevel: number) => any
+) => Promise<any>;
+
 function useCrystallize(): {
+    helpers: {
+        createNavigationByFoldersFetcher: LanguageAwareTreeFetcher;
+        createNavigationByTopicsFetcher: LanguageAwareTreeFetcher;
+    };
     apiClient: ClientInterface;
     state: State;
     dispatch: Actions;
 } {
     const actions = mapToReducerActions(useCrystallizeDispatch());
     const state = useCrystallizeState();
+
+    const apiClient = createClient({
+        tenantIdentifier: state.configuration.tenantIdentifier
+    });
+
+    const helpers = {
+        createNavigationByFoldersFetcher: (
+            path: string,
+            depth: number = 1,
+            extraQuery?: any,
+            perLevel?: (currentLevel: number) => any
+        ) =>
+            createNavigationByFoldersFetcher(apiClient)(
+                path,
+                state.language,
+                depth,
+                extraQuery,
+                perLevel
+            ),
+        createNavigationByTopicsFetcher: (
+            path: string,
+            depth: number = 1,
+            extraQuery?: any,
+            perLevel?: (currentLevel: number) => any
+        ) =>
+            createNavigationByFoldersFetcher(apiClient)(
+                path,
+                state.language,
+                depth,
+                extraQuery,
+                perLevel
+            )
+    };
+
     return {
-        apiClient: createClient({
-            tenantIdentifier: state.configuration.tenantIdentifier
-        }),
+        helpers,
+        apiClient,
         state,
         dispatch: actions
     };
