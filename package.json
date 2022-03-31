@@ -26,10 +26,6 @@
         "react": "*",
         "react-dom": "*"
     },
-    "volta": {
-        "node": "16.13.2",
-        "yarn": "1.22.18"
-    },
     "license": "MIT",
     "name": "@crystallize/reactjs-hooks",
     "version": "0.3.0"
