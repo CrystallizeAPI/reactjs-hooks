@@ -12,9 +12,10 @@ import {
     createClient,
     ClientInterface,
     createNavigationByFoldersFetcher,
-    createNavigationByTopicsFetcher
+    createNavigationByTopicsFetcher,
+    createProductHydraterByPaths,
+    createProductHydraterBySkus
 } from '@crystallize/js-api-client';
-import type { TreeFetcher } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
 const DispatchContext = React.createContext<Dispatch | undefined>(undefined);
@@ -85,10 +86,18 @@ export type LanguageAwareTreeFetcher = (
     perLevel?: (currentLevel: number) => any
 ) => Promise<any>;
 
+export type LanguageAwareHydrater = (
+    items: string[],
+    extraQuery?: any,
+    perProduct?: (item: string, index: number) => any
+) => Promise<any>;
+
 function useCrystallize(): {
     helpers: {
         createNavigationByFoldersFetcher: LanguageAwareTreeFetcher;
         createNavigationByTopicsFetcher: LanguageAwareTreeFetcher;
+        createProductHydraterByPaths: LanguageAwareHydrater;
+        createProductHydraterBySkus: LanguageAwareHydrater;
     };
     apiClient: ClientInterface;
     state: State;
@@ -121,12 +130,34 @@ function useCrystallize(): {
             extraQuery?: any,
             perLevel?: (currentLevel: number) => any
         ) =>
-            createNavigationByFoldersFetcher(apiClient)(
+            createNavigationByTopicsFetcher(apiClient)(
                 path,
                 state.language,
                 depth,
                 extraQuery,
                 perLevel
+            ),
+        createProductHydraterByPaths: (
+            paths: string[],
+            extraQuery?: any,
+            perProduct?: (item: string, index: number) => any
+        ) =>
+            createProductHydraterByPaths(apiClient)(
+                paths,
+                state.language,
+                extraQuery,
+                perProduct
+            ),
+        createProductHydraterBySkus: (
+            skus: string[],
+            extraQuery?: any,
+            perProduct?: (item: string, index: number) => any
+        ) =>
+            createProductHydraterBySkus(apiClient)(
+                skus,
+                state.language,
+                extraQuery,
+                perProduct
             )
     };
 
