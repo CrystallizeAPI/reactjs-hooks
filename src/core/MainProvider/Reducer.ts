@@ -48,8 +48,7 @@ export function Reducer(state: State, action: Action) {
 export function mapToReducerActions(dispatch: Dispatch): Actions {
     return {
         loading: (state: boolean) => dispatch({ type: 'LOADING', state }),
-        changeLanguage: (language: string) =>
-            dispatch({ type: 'CHANGE_LANGUAGE', language }),
+        changeLanguage: (language: string) => dispatch({ type: 'CHANGE_LANGUAGE', language }),
         updateConfiguration: (configuration: ClientConfiguration) =>
             dispatch({ type: 'UPDATE_CONFIGURATION', configuration })
     };
