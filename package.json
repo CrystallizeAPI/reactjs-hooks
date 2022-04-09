@@ -1,4 +1,11 @@
 {
+    "name": "@crystallize/reactjs-hooks",
+    "license": "MIT",
+    "version": "0.4.0",
+    "author": "Crystallize <hello@crystallize.com> (https://crystallize.com)",
+    "contributors": [
+        "Sébastien Morel <sebastien@crystallize.com>"
+    ],
     "scripts": {
         "watch": "yarn tsc -W",
         "build": "yarn tsc",
@@ -25,8 +32,5 @@
     "peerDependencies": {
         "react": "*",
         "react-dom": "*"
-    },
-    "license": "MIT",
-    "name": "@crystallize/reactjs-hooks",
-    "version": "0.3.1"
+    }
 }
