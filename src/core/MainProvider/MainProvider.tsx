@@ -23,6 +23,7 @@ const initialState = (configuration: ClientConfiguration, language: string): Sta
 };
 
 const CrystallizeProvider: FunctionComponent<{
+    children: React.ReactNode;
     language: string;
     tenantIdentifier: string;
     accessTokenId?: string;
