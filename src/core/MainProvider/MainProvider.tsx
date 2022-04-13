@@ -5,10 +5,9 @@ import {
     ClientConfiguration,
     createClient,
     ClientInterface,
-    createNavigationByFoldersFetcher,
-    createNavigationByTopicsFetcher,
-    createProductHydraterByPaths,
-    createProductHydraterBySkus
+    createNavigationFetcher,
+    createProductHydrater,
+    createOrderFetcher
 } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
@@ -71,10 +70,15 @@ export type LanguageAwareHydrater = (
 
 function useCrystallize(): {
     helpers: {
-        createNavigationByFoldersFetcher: LanguageAwareTreeFetcher;
-        createNavigationByTopicsFetcher: LanguageAwareTreeFetcher;
-        createProductHydraterByPaths: LanguageAwareHydrater;
-        createProductHydraterBySkus: LanguageAwareHydrater;
+        navigationFetcher: {
+            byFolders: LanguageAwareTreeFetcher;
+            byTopics: LanguageAwareTreeFetcher;
+        };
+        productHydrater: {
+            byPaths: LanguageAwareHydrater;
+            bySkus: LanguageAwareHydrater;
+        };
+        orderFetcher: {};
     };
     apiClient: ClientInterface;
     state: State;
@@ -88,30 +92,24 @@ function useCrystallize(): {
     });
 
     const helpers = {
-        createNavigationByFoldersFetcher: (
-            path: string,
-            depth: number = 1,
-            extraQuery?: any,
-            perLevel?: (currentLevel: number) => any
-        ) => createNavigationByFoldersFetcher(apiClient)(path, state.language, depth, extraQuery, perLevel),
-        createNavigationByTopicsFetcher: (
-            path: string,
-            depth: number = 1,
-            extraQuery?: any,
-            perLevel?: (currentLevel: number) => any
-        ) => createNavigationByTopicsFetcher(apiClient)(path, state.language, depth, extraQuery, perLevel),
-        createProductHydraterByPaths: (
-            paths: string[],
-            extraQuery?: any,
-            perProduct?: (item: string, index: number) => any
-        ) => createProductHydraterByPaths(apiClient)(paths, state.language, extraQuery, perProduct),
-        createProductHydraterBySkus: (
-            skus: string[],
-            extraQuery?: any,
-            perProduct?: (item: string, index: number) => any
-        ) => createProductHydraterBySkus(apiClient)(skus, state.language, extraQuery, perProduct)
+        navigationFetcher: {
+            byFolders: (path: string, depth: number = 1, extraQuery?: any, perLevel?: (currentLevel: number) => any) =>
+                createNavigationFetcher(apiClient).byFolders(path, state.language, depth, extraQuery, perLevel),
+            byTopics: (path: string, depth: number = 1, extraQuery?: any, perLevel?: (currentLevel: number) => any) =>
+                createNavigationFetcher(apiClient).byTopics(path, state.language, depth, extraQuery, perLevel)
+        },
+        productHydrater: {
+            byPaths: (paths: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
+                createProductHydrater(apiClient).byPaths(paths, state.language, extraQuery, perProduct),
+            bySkus: (skus: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
+                createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct)
+        },
+        orderFetcher: {
+            byId: (id: string) => createOrderFetcher(apiClient).byId(id),
+            byCustomerIdentifier: (customerIdentifier: string) =>
+                createOrderFetcher(apiClient).byCustomerIdentifier(customerIdentifier)
+        }
     };
-
     return {
         helpers,
         apiClient,
