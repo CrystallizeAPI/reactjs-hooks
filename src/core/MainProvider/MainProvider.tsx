@@ -7,7 +7,9 @@ import {
     ClientInterface,
     createNavigationFetcher,
     createProductHydrater,
-    createOrderFetcher
+    createOrderFetcher,
+    createCatalogueFetcher,
+    Order
 } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
@@ -70,6 +72,7 @@ export type LanguageAwareHydrater = (
 
 function useCrystallize(): {
     helpers: {
+        catalogueFetcher: ReturnType<typeof createCatalogueFetcher>;
         navigationFetcher: {
             byFolders: LanguageAwareTreeFetcher;
             byTopics: LanguageAwareTreeFetcher;
@@ -78,7 +81,7 @@ function useCrystallize(): {
             byPaths: LanguageAwareHydrater;
             bySkus: LanguageAwareHydrater;
         };
-        orderFetcher: {};
+        orderFetcher: ReturnType<typeof createOrderFetcher>;
     };
     apiClient: ClientInterface;
     state: State;
@@ -92,6 +95,7 @@ function useCrystallize(): {
     });
 
     const helpers = {
+        catalogueFetcher: createCatalogueFetcher(apiClient),
         navigationFetcher: {
             byFolders: (path: string, depth: number = 1, extraQuery?: any, perLevel?: (currentLevel: number) => any) =>
                 createNavigationFetcher(apiClient).byFolders(path, state.language, depth, extraQuery, perLevel),
@@ -104,11 +108,7 @@ function useCrystallize(): {
             bySkus: (skus: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
                 createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct)
         },
-        orderFetcher: {
-            byId: (id: string) => createOrderFetcher(apiClient).byId(id),
-            byCustomerIdentifier: (customerIdentifier: string) =>
-                createOrderFetcher(apiClient).byCustomerIdentifier(customerIdentifier)
-        }
+        orderFetcher: createOrderFetcher(apiClient)
     };
     return {
         helpers,
