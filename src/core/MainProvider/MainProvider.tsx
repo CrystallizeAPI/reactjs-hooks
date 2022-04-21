@@ -70,19 +70,21 @@ export type LanguageAwareHydrater = (
     perProduct?: (item: string, index: number) => any
 ) => Promise<any>;
 
-function useCrystallize(): {
-    helpers: {
-        catalogueFetcher: ReturnType<typeof createCatalogueFetcher>;
-        navigationFetcher: {
-            byFolders: LanguageAwareTreeFetcher;
-            byTopics: LanguageAwareTreeFetcher;
-        };
-        productHydrater: {
-            byPaths: LanguageAwareHydrater;
-            bySkus: LanguageAwareHydrater;
-        };
-        orderFetcher: ReturnType<typeof createOrderFetcher>;
+type helpers = {
+    catalogueFetcher: ReturnType<typeof createCatalogueFetcher>;
+    navigationFetcher: {
+        byFolders: LanguageAwareTreeFetcher;
+        byTopics: LanguageAwareTreeFetcher;
     };
+    productHydrater: {
+        byPaths: LanguageAwareHydrater;
+        bySkus: LanguageAwareHydrater;
+    };
+    orderFetcher: ReturnType<typeof createOrderFetcher>;
+};
+
+function useCrystallize(): {
+    helpers: helpers;
     apiClient: ClientInterface;
     state: State;
     dispatch: Actions;
@@ -94,22 +96,32 @@ function useCrystallize(): {
         tenantIdentifier: state.configuration.tenantIdentifier
     });
 
-    const helpers = {
-        catalogueFetcher: createCatalogueFetcher(apiClient),
-        navigationFetcher: {
-            byFolders: (path: string, depth: number = 1, extraQuery?: any, perLevel?: (currentLevel: number) => any) =>
-                createNavigationFetcher(apiClient).byFolders(path, state.language, depth, extraQuery, perLevel),
-            byTopics: (path: string, depth: number = 1, extraQuery?: any, perLevel?: (currentLevel: number) => any) =>
-                createNavigationFetcher(apiClient).byTopics(path, state.language, depth, extraQuery, perLevel)
-        },
-        productHydrater: {
-            byPaths: (paths: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
-                createProductHydrater(apiClient).byPaths(paths, state.language, extraQuery, perProduct),
-            bySkus: (skus: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
-                createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct)
-        },
-        orderFetcher: createOrderFetcher(apiClient)
-    };
+    const helpers: helpers = React.useMemo(() => {
+        return {
+            catalogueFetcher: createCatalogueFetcher(apiClient),
+            navigationFetcher: {
+                byFolders: (
+                    path: string,
+                    depth: number = 1,
+                    extraQuery?: any,
+                    perLevel?: (currentLevel: number) => any
+                ) => createNavigationFetcher(apiClient).byFolders(path, state.language, depth, extraQuery, perLevel),
+                byTopics: (
+                    path: string,
+                    depth: number = 1,
+                    extraQuery?: any,
+                    perLevel?: (currentLevel: number) => any
+                ) => createNavigationFetcher(apiClient).byTopics(path, state.language, depth, extraQuery, perLevel)
+            },
+            productHydrater: {
+                byPaths: (paths: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
+                    createProductHydrater(apiClient).byPaths(paths, state.language, extraQuery, perProduct),
+                bySkus: (skus: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
+                    createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct)
+            },
+            orderFetcher: createOrderFetcher(apiClient)
+        };
+    }, [apiClient, state.language]);
     return {
         helpers,
         apiClient,
