@@ -9,7 +9,7 @@ import {
     createProductHydrater,
     createOrderFetcher,
     createCatalogueFetcher,
-    Order
+    Order,
 } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
@@ -19,7 +19,7 @@ const initialState = (configuration: ClientConfiguration, language: string): Sta
     return {
         loading: false,
         language: language,
-        configuration: configuration
+        configuration: configuration,
     };
 };
 
@@ -32,7 +32,7 @@ const CrystallizeProvider: FunctionComponent<{
 }> = ({ tenantIdentifier, accessTokenId, accessTokenSecret, language, children }) => {
     const [state, dispatch] = React.useReducer(
         Reducer,
-        initialState({ tenantIdentifier, accessTokenId, accessTokenSecret }, language)
+        initialState({ tenantIdentifier, accessTokenId, accessTokenSecret }, language),
     );
     return (
         <StateContext.Provider value={state}>
@@ -61,13 +61,13 @@ export type LanguageAwareTreeFetcher = (
     path: string,
     depth: number,
     extraQuery?: any,
-    perLevel?: (currentLevel: number) => any
+    perLevel?: (currentLevel: number) => any,
 ) => Promise<any>;
 
 export type LanguageAwareHydrater = (
     items: string[],
     extraQuery?: any,
-    perProduct?: (item: string, index: number) => any
+    perProduct?: (item: string, index: number) => any,
 ) => Promise<any>;
 
 type helpers = {
@@ -93,7 +93,7 @@ function useCrystallize(): {
     const state = useCrystallizeState();
 
     const apiClient = createClient({
-        tenantIdentifier: state.configuration.tenantIdentifier
+        tenantIdentifier: state.configuration.tenantIdentifier,
     });
 
     const helpers: helpers = React.useMemo(() => {
@@ -104,29 +104,29 @@ function useCrystallize(): {
                     path: string,
                     depth: number = 1,
                     extraQuery?: any,
-                    perLevel?: (currentLevel: number) => any
+                    perLevel?: (currentLevel: number) => any,
                 ) => createNavigationFetcher(apiClient).byFolders(path, state.language, depth, extraQuery, perLevel),
                 byTopics: (
                     path: string,
                     depth: number = 1,
                     extraQuery?: any,
-                    perLevel?: (currentLevel: number) => any
-                ) => createNavigationFetcher(apiClient).byTopics(path, state.language, depth, extraQuery, perLevel)
+                    perLevel?: (currentLevel: number) => any,
+                ) => createNavigationFetcher(apiClient).byTopics(path, state.language, depth, extraQuery, perLevel),
             },
             productHydrater: {
                 byPaths: (paths: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
                     createProductHydrater(apiClient).byPaths(paths, state.language, extraQuery, perProduct),
                 bySkus: (skus: string[], extraQuery?: any, perProduct?: (item: string, index: number) => any) =>
-                    createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct)
+                    createProductHydrater(apiClient).bySkus(skus, state.language, extraQuery, perProduct),
             },
-            orderFetcher: createOrderFetcher(apiClient)
+            orderFetcher: createOrderFetcher(apiClient),
         };
     }, [apiClient, state.language]);
     return {
         helpers,
         apiClient,
         state,
-        dispatch: actions
+        dispatch: actions,
     };
 }
 

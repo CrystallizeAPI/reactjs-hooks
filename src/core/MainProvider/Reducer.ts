@@ -24,19 +24,19 @@ export function Reducer(state: State, action: Action) {
         case 'LOADING': {
             return {
                 ...state,
-                loading: action.state
+                loading: action.state,
             };
         }
         case 'CHANGE_LANGUAGE': {
             return {
                 ...state,
-                language: action.language
+                language: action.language,
             };
         }
         case 'UPDATE_CONFIGURATION': {
             return {
                 ...state,
-                configuration: action.configuration
+                configuration: action.configuration,
             };
         }
         default: {
@@ -50,6 +50,6 @@ export function mapToReducerActions(dispatch: Dispatch): Actions {
         loading: (state: boolean) => dispatch({ type: 'LOADING', state }),
         changeLanguage: (language: string) => dispatch({ type: 'CHANGE_LANGUAGE', language }),
         updateConfiguration: (configuration: ClientConfiguration) =>
-            dispatch({ type: 'UPDATE_CONFIGURATION', configuration })
+            dispatch({ type: 'UPDATE_CONFIGURATION', configuration }),
     };
 }
