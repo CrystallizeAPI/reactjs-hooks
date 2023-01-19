@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { State, Dispatch, Actions, Reducer, mapToReducerActions } from './Reducer';
 import { FunctionComponent } from 'react';
@@ -9,7 +10,6 @@ import {
     createProductHydrater,
     createOrderFetcher,
     createCatalogueFetcher,
-    Order,
 } from '@crystallize/js-api-client';
 
 const StateContext = React.createContext<State | undefined>(undefined);
